@@ -21,8 +21,9 @@ from astropy.wcs.utils import pixel_to_skycoord
 def do_RM_compare(dir_in,fs=12,llim=[82,52], blim=[-7,10],*args,**kwargs):
     
     hdu_RM_CG = fits.open(dir_in+'RM_CG_conv4_regrd.fits')
-    hdu_RM_G  = fits.open(dir_in+'RM_G_conv4_regrd.fits')
-    hdu_FD_G  = fits.open(dir_in+'phi_peak_regrd.fits')
+    hdu_RM_G  = fits.open(dir_in+'RM_G_regrd.fits')
+    #hdu_FD_G  = fits.open(dir_in+'phi_peak_regrd.fits')
+    hdu_FD_G  = fits.open('/srv/data/cgps-gmims/gmims_FD/phi_peak_regrd.fits')
     #hdu_RM_G  = fits.open(dir_in+'RM_G_regrd.fits')
     hdu_RM_C  = fits.open(dir_in+'RM_C_conv4_regrd.fits')
     RM_CG     = hdu_RM_CG[0].data
@@ -48,10 +49,10 @@ def do_RM_compare(dir_in,fs=12,llim=[82,52], blim=[-7,10],*args,**kwargs):
     PAint_G   = hdu_RM_G[1].data
     PAint_C   = hdu_RM_C[1].data
 
-    hdu_PI_CG = fits.open(dir_in+'PI_CG_conv4_regrd_avg_PI.fits')
+    hdu_PI_CG = fits.open(dir_in+'PI_CG_conv4_regrd_PI_of_mean.fits')
     #hdu_PI_G  = fits.open(dir_in+'PI_G_conv4_regrd_avg_PI.fits')
-    hdu_PI_G  = fits.open(dir_in+'PI_G_conv4_regrd_avg_PI.fits')
-    hdu_PI_C  = fits.open(dir_in+'PI_C_conv4_regrd_avg_PI.fits')
+    hdu_PI_G  = fits.open(dir_in+'PI_G_regrd_PI_of_mean.fits')
+    hdu_PI_C  = fits.open(dir_in+'PI_C_conv4_regrd_PI_of_mean.fits')
     PI_CG     = hdu_PI_CG[0].data
     PI_G      = hdu_PI_G[0].data
     PI_C      = hdu_PI_C[0].data
@@ -61,14 +62,14 @@ def do_RM_compare(dir_in,fs=12,llim=[82,52], blim=[-7,10],*args,**kwargs):
     hdu_PA_C_CG = fits.open(dir_in+'PA_C_CG_conv4_regrd.fits')
     hdu_PA_D_CG = fits.open(dir_in+'PA_D_CG_conv4_regrd.fits')
 
-    hdu_PA_A_G = fits.open(dir_in+'PA_A_G_conv4_regrd.fits')
-    hdu_PA_B_G = fits.open(dir_in+'PA_B_G_conv4_regrd.fits')
-    hdu_PA_C_G = fits.open(dir_in+'PA_C_G_conv4_regrd.fits')
-    hdu_PA_D_G = fits.open(dir_in+'PA_D_G_conv4_regrd.fits')
-    #hdu_PA_A_G = fits.open(dir_in+'PA_A_G_regrd.fits')
-    #hdu_PA_B_G = fits.open(dir_in+'PA_B_G_regrd.fits')
-    #hdu_PA_C_G = fits.open(dir_in+'PA_C_G_regrd.fits')
-    #hdu_PA_D_G = fits.open(dir_in+'PA_D_G_regrd.fits')
+    #hdu_PA_A_G = fits.open(dir_in+'PA_A_G_conv4_regrd.fits')
+    #hdu_PA_B_G = fits.open(dir_in+'PA_B_G_conv4_regrd.fits')
+    #hdu_PA_C_G = fits.open(dir_in+'PA_C_G_conv4_regrd.fits')
+    #hdu_PA_D_G = fits.open(dir_in+'PA_D_G_conv4_regrd.fits')
+    hdu_PA_A_G = fits.open(dir_in+'PA_A_G_regrd.fits')
+    hdu_PA_B_G = fits.open(dir_in+'PA_B_G_regrd.fits')
+    hdu_PA_C_G = fits.open(dir_in+'PA_C_G_regrd.fits')
+    hdu_PA_D_G = fits.open(dir_in+'PA_D_G_regrd.fits')
     
     hdu_PA_A_C = fits.open(dir_in+'PA_A_C_conv4_regrd.fits')
     hdu_PA_B_C = fits.open(dir_in+'PA_B_C_conv4_regrd.fits')
