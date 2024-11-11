@@ -1,0 +1,417 @@
+#!/usr/bin/perl -w
+#
+# script to add GMIMS polarization data to SST fields  
+# this script has to be started on the fields polarization 
+# work directory
+#
+# RUN THIS IN THE PRC DIRECTORY - called by easy_fields_new_GC
+#
+# Adaped to work with GMIMS+CGPS, AO February, 2021
+#
+# See PhD notes on tweaking the parameters used here.
+# 
+
+print "Survey Lettercode?: ";
+$survey1=<STDIN>;
+chop($survey1);
+print "Survey Number?: ";
+$survey2=<STDIN>;
+chop($survey2);
+
+$survey1 = uc $survey1;
+$field="$survey1"."$survey2";
+
+#$band="abcd";
+#$stokes="q";
+#&sspadd;
+
+#$band="abcd";
+#$stokes="u";
+#&sspadd;
+
+$band="a";
+$stokes="q";
+$freq=1407.2;
+&sspadd;
+
+$band="a";
+$stokes="u";
+$freq=1407.2;
+&sspadd;
+
+$band="b";
+$stokes="q";
+$freq=1414.1;
+&sspadd;
+
+$band="b";
+$stokes="u";
+$freq=1414.1;
+&sspadd;
+
+$band="c";
+$stokes="q";
+$freq=1427.7;
+&sspadd;
+
+$band="c";
+$stokes="u";
+$freq=1427.7;
+&sspadd;
+
+$band="d";
+$stokes="q";
+$freq=1434.6;
+&sspadd;
+
+$band="d";
+$stokes="u";
+$freq=1434.6;
+&sspadd;
+
+
+sub sspadd {
+chdir "$band"."/$stokes";
+
+#
+# Taper Short Spacing Map - no changes for GMIMS/CGPS
+# The parameters here just determine the tapering used for
+# the FFT. The remaining region is much larger than the
+# SST field, so we are not cutting out any data that are
+# actually used.
+#
+open(MAPTAPER, "|maptaper");
+print MAPTAPER "\n";  #! Do you wish to run in batch mo
+print MAPTAPER "\n";  #! Do you want to create a log? [
+print MAPTAPER "\n";  #! Is log file to be printed on e
+print MAPTAPER "3\n";  #!   File definition number [DEFI
+print MAPTAPER "\n";  #!   File definition number [DEFI
+print MAPTAPER "ssp_field.taper\n";  #! File name (max 52 chars) [] ("
+print MAPTAPER "\n";  #! Are the parameters that you en
+print MAPTAPER "y\n";  #! Do you want a comment? [N]:
+print MAPTAPER "Short Spacing Map tapered\n";  #! C:
+print MAPTAPER "\n";  #! Do you want to save this defin
+print MAPTAPER "3\n";  #! Taper function [1]:
+print MAPTAPER "10\n";  #! Width (pixels) to 50% level of
+print MAPTAPER "z\n";  #!  image-edge average (A), or to
+print MAPTAPER "\n";  #!  where the image is M x N pixe
+print MAPTAPER "241\n";  #! Radius (pixels) from symmetry
+print MAPTAPER "\n";  #! Inverse power for exponential
+close(MAPTAPER);
+
+#
+# Short Spacing Map to UV - added line to input frequency
+# Should double check EXACTLY what frequencies should be
+# used here or whether it matters much.
+#
+open(MAP2UVP1, "|map2uvp");
+print MAP2UVP1 "\n";  #! Do you wish to run in batch mo
+print MAP2UVP1 "n\n";  #! Do you want to create a log? [
+print MAP2UVP1 "\n";  #! Are we going from map to UV pl
+print MAP2UVP1 "y\n";  #! Do you want output to be AMPLI
+print MAP2UVP1 "4\n";  #!   File definition number [DEFI
+print MAP2UVP1 "$freq\n"; #! Enter frequency (MHz) for UV data ***ADDED THIS!!!***
+print MAP2UVP1 "\n";  #!   File definition number [DEFI
+print MAP2UVP1 "ssp_field.uv\n";  #! File name (max 52 chars) [] ("
+print MAP2UVP1 "\n";  #! Are the parameters that you en
+print MAP2UVP1 "y\n";  #! Do you want a comment? [N]:
+print MAP2UVP1 "Short Spacing data in UV\n";  #! C:
+print MAP2UVP1 "\n";  #! Do you want to save this defin
+close(MAP2UVP1);
+
+#
+# Deconvolve Short Spacing Map in UV - changed Gaussian beam width
+# Should check whether 9 m is actually correct for deconvolution!
+# Feb 23, 2023: changed this back to 9 m. This is correct.
+#
+open(UVANALYZE1, "|uvanalyze");
+print UVANALYZE1 "\n";  #! Do you wish to run in batch mo
+print UVANALYZE1 "n\n";   #! Do you want to create a log? [
+print UVANALYZE1 "8\n";  #! Desired operation [split] [1]:
+print UVANALYZE1 "5\n";  #!   File definition number [DEFI
+print UVANALYZE1 "\n";   #!   File definition number [DEFI
+print UVANALYZE1 "ssp_field.uv_deconv\n";  #! File name (max 52 chars) [] ("
+print UVANALYZE1 "\n";   #! Are "undefined" data allowed?
+print UVANALYZE1 "\n";   #! Are the parameters that you en
+print UVANALYZE1 "y\n";  #! Do you want a comment? [N]:
+print UVANALYZE1 "short Spacing deconvolved in UV\n";  #! C:
+print UVANALYZE1 "\n";   #! Do you want to save this defin
+print UVANALYZE1 "\n";   #! Is taper to be multiplicative?
+print UVANALYZE1 "9.0\n";  #! Distance to half-power for Gau ***CHANGED THIS!!!***
+print UVANALYZE1 "\n";   #! Minor/major axis ratio [1.000]
+print UVANALYZE1 "\n";   #! Angle to major axis (degrees C
+close(UVANALYZE1);
+
+#
+# Short Spacing Map low-pass filtered in UV - changed outer boundary of filter
+# If we change the uv-radius to which we actually use the SSP data (smaller than
+# 17.144 m) then we can change the 18 m to a smaller outer limit as well. Though
+# this might not be necessary...
+#
+open(UVANALYZE2, "|uvanalyze");
+print UVANALYZE2 "\n";  #! Do you wish to run in batch mo
+print UVANALYZE2 "n\n";  #! Do you want to create a log? [
+print UVANALYZE2 "4\n";  #! Desired operation [split] [1]:
+print UVANALYZE2 "6\n";  #!   File definition number [DEFI
+print UVANALYZE2 "\n";  #!   File definition number [DEFI
+print UVANALYZE2 "ssp_field.uv_filter\n";  #! File name (max 52 chars) [] ("
+print UVANALYZE2 "\n";  #! Are "undefined" data allowed?
+print UVANALYZE2 "\n";  #! Are the parameters that you en
+print UVANALYZE2 "y\n";  #! Do you want a comment? [N]:
+print UVANALYZE2 "Short Spacings UV low-pass filtered\n"; #! C:
+print UVANALYZE2 "\n";  #! Do you want to save this defin
+print UVANALYZE2 "0.0 18.0\n";  #!  (excludes any feathered regio ***CHANGED THIS!!!***
+print UVANALYZE2 "\n";  #! Minor/major axis ratio [1.000]
+print UVANALYZE2 "\n";  #! Angle to major axis (degrees C
+print UVANALYZE2 "\n";  #! Is feathering wanted? [Y]:
+print UVANALYZE2 "1.2\n";  #! Ratio of feather edge to outer
+close(UVANALYZE2);
+
+#
+# Short Spacing Map back from UV to Map plane - no change
+# This is a simple step with no parameters to be modified.
+#
+open(MAP2UVP2, "|map2uvp");
+print MAP2UVP2 "\n";  #! Do you wish to run in batch mo
+print MAP2UVP2 "n\n";  #! Do you want to create a log? [
+print MAP2UVP2 "n\n";  #! Are we going from map to UV pl
+print MAP2UVP2 "7\n";  #!   File definition number [DEFI
+print MAP2UVP2 "\n";  #!   File definition number [DEFI
+print MAP2UVP2 "SSP_FIELD.final_map\n";  #! File name (max 52 chars) [] ("
+print MAP2UVP2 "\n";  #! Data type (IRD) [R]:
+print MAP2UVP2 "\n";  #! Are "undefined" data allowed?
+print MAP2UVP2 "\n";  #! Are the parameters that you en
+print MAP2UVP2 "y\n";  #! Do you want a comment? [N]:
+print MAP2UVP2 "Short Spacing Final Map\n";  #! C:
+print MAP2UVP2 "\n";  #! Do you want to save this defin
+close(MAP2UVP2);
+
+#
+# Final Short Spacing Map tapered - no change
+# This is getting SST primary beam parameters directly
+# from "polarcorr" - check that it's correct.
+#
+open(POLARCORR, "|polarcorr");
+print POLARCORR "\n";  #! Do you wish to run in batch mo
+print POLARCORR "\n";  #! Do you want to create a log? [
+print POLARCORR "\n";  #! Is log file to be printed on e
+print POLARCORR "8\n";  #!   File definition number [DEFI
+print POLARCORR "\n";  #! Are input data to be scaled be
+print POLARCORR "\n";  #!   File definition number [DEFI
+print POLARCORR "ssp_field.final_taper\n";  #! File name (max 52 chars) [] ("
+print POLARCORR "\n";  #! Data type (IRD) [R]:
+print POLARCORR "\n";  #!    Value to indicate "undefine
+print POLARCORR "\n";  #! Are the parameters that you en
+print POLARCORR "y\n";  #! Do you want a comment? [N]:
+print POLARCORR "Short Spacing Final Tapered Map\n";  #! C:
+print POLARCORR "\n";  #! Do you want to save this defin
+print POLARCORR "\n";  #! Is polar-diagram centre at map
+print POLARCORR "\n";  #! Gaussian (G), cosine-power (C)
+print POLARCORR "\n";  #! Full-width at half-power of po
+print POLARCORR "\n";  #!   Cosine exponent to be used [
+print POLARCORR "y\n";  #! Is inverse correction to be ma
+print POLARCORR "\n";  #! Is output map to be set to "un
+close(POLARCORR);
+
+#
+# Final Tapered Short Spacing Map back to UV - added line to indicate frequency
+# Again, check to what extent this frequency matters....
+#
+open(MAP2UVP3, "|map2uvp");
+print MAP2UVP3 "\n";  #! Do you wish to run in batch mo
+print MAP2UVP3 "n\n";  #! Do you want to create a log? [
+print MAP2UVP3 "\n";  #! Are we going from map to UV pl
+print MAP2UVP3 "y\n";  #! Do you want output to be AMPLI
+print MAP2UVP3 "9\n";  #!   File definition number [DEFI
+print MAP2UVP3 "y\n";  #!
+print MAP2UVP3 "y\n";  #!
+print MAP2UVP3 "$freq\n"; #! Enter frequency (MHz) for UV data *** ADDED THIS!!!***
+print MAP2UVP3 "\n";  #!   File definition number [DEFI
+print MAP2UVP3 "ssp_field.final_uv\n";  #! File name (max 52 chars) [] ("
+print MAP2UVP3 "\n";  #! Are the parameters that you en
+print MAP2UVP3 "\n";  #! Do you want a comment? [N]:
+print MAP2UVP3 "\n";  #! Do you want to save this defin
+close(MAP2UVP3);
+
+#
+# Final Tapered Short Spacing Map Feathered in UV - changed feathering ratio
+# Has to start at 12.858 (not lower) since that's lower limit of SST.
+# The only thing to potentially change is a steeper drop to zero for the 
+# SSP, meaning SST will contribute some below 17.144 m.
+# Feb 23, 2023: changed feathering start of 12.858 m to 8.572 m, and
+# ratio from 1.3333333 to 2 (contribute less SA and overlap more)
+#
+open(UVANALYZE3, "|uvanalyze");
+print UVANALYZE3 "\n";  #! Do you wish to run in batch mo
+print UVANALYZE3 "n\n";  #! Do you want to create a log? [
+print UVANALYZE3 "4\n";  #! Desired operation [split] [1]:
+print UVANALYZE3 "10\n";  #!   File definition number [DEFI
+print UVANALYZE3 "\n";  #!   File definition number [DEFI
+print UVANALYZE3 "ssp_field.final_uv_feather\n";  #! File name (max 52 chars) [] ("
+print UVANALYZE3 "\n";  #! Are "undefined" data allowed?
+print UVANALYZE3 "\n";  #! Are the parameters that you en
+print UVANALYZE3 "y\n";  #! Do you want a comment? [N]:
+print UVANALYZE3 "SSP field, feathered in UV plane\n";
+print UVANALYZE3 "\n"; #! Do you want to save this defin
+print UVANALYZE3 "0.0 8.572\n";  #!  (excludes any feathered regio
+print UVANALYZE3 "1.0\n";  #! Minor/major axis ratio [1.000]
+print UVANALYZE3 "-180d\n";  #! Angle to major axis (degrees C
+print UVANALYZE3 "\n";  #! Is feathering wanted? [Y]:
+print UVANALYZE3 "2.0\n";  #! Ratio of feather edge to outer ***CHANGED THIS!!!***
+close(UVANALYZE3);
+
+#
+# Final Map ready to be added to the ST data - no changes
+# Just another FFT here - no parameters to set
+#
+open(MAP2UVP4, "|map2uvp");
+print MAP2UVP4 "\n";  #! Do you wish to run in batch mo
+print MAP2UVP4 "n\n";  #! Do you want to create a log? [
+print MAP2UVP4 "n\n";  #! Are we going from map to UV pl
+print MAP2UVP4 "11\n";  #!   File definition number [DEFI
+print MAP2UVP4 "\n";  #!   File definition number [DEFI
+print MAP2UVP4 "ssp_field.map_ready\n";  #! File name (max 52 chars) [] ("
+print MAP2UVP4 "\n";  #! Data type (IRD) [R]:
+print MAP2UVP4 "\n";  #! Are "undefined" data allowed?
+print MAP2UVP4 "\n";  #! Are the parameters that you en
+print MAP2UVP4 "y\n";  #! Do you want a comment? [N]:
+print MAP2UVP4 "SSP Field ready to add to SST data\n";  #! C:
+print MAP2UVP4 "\n";  #! Do you want to save this defin
+close(MAP2UVP4);
+
+#
+# SST Map to UV - no changes
+# Just another FFT here - no parameters to set
+#
+open(MAP2UVP5, "|map2uvp");
+print MAP2UVP5 "\n";  #! Do you wish to run in batch mo
+print MAP2UVP5 "n\n";  #! Do you want to create a log? [
+print MAP2UVP5 "\n";  #! Are we going from map to UV pl
+print MAP2UVP5 "y\n";  #! Do you want output to be AMPLI
+print MAP2UVP5 "1\n";  #!   File definition number [DEFI
+print MAP2UVP5 "\n";  #!   File definition number [DEFI
+print MAP2UVP5 "sst_field.uv\n";  #! File name (max 52 chars) [] ("
+print MAP2UVP5 "\n";  #! Are the parameters that you en
+print MAP2UVP5 "y\n";  #! Do you want a comment? [N]:
+print MAP2UVP5 "SST field in UV\n";  #! C:
+print MAP2UVP5 "\n";  #! Do you want to save this defin
+close(MAP2UVP5);
+
+#
+# SST Map Feathered in UV - changed feathering parematers.
+# Change this if we end up narrowing the overlap region, as
+# described above.
+# Feb 23, 2023: kept feathering start of 17.144 m, but changed
+# ratio from 0.75 to 0.5 (contribute less SA and overlap more)
+#
+open(UVANALYZE4, "|uvanalyze");
+print UVANALYZE4 "\n";  #! Do you wish to run in batch mo
+print UVANALYZE4 "n\n";  #! Do you want to create a log? [
+print UVANALYZE4 "3\n";  #! Desired operation [split] [1]:
+print UVANALYZE4 "13\n";  #!   File definition number [DEFI
+print UVANALYZE4 "\n";  #!   File definition number [DEFI
+print UVANALYZE4 "sst_field.uv_feather\n";  #! File name (max 52 chars) [] ("
+print UVANALYZE4 "\n";  #! Are "undefined" data allowed?
+print UVANALYZE4 "\n";  #! Are the parameters that you en
+print UVANALYZE4 "y\n";  #! Do you want a comment? [N]:
+print UVANALYZE4 "SST field feathered in UV\n";  #! C:
+print UVANALYZE4 "\n";  #! Do you want to save this defin
+print UVANALYZE4 "0.0 17.144\n";  #!  (may include a feathered regi ***CHANGED THIS!!!***
+print UVANALYZE4 "\n";  #! Minor/major axis ratio [1.000]
+print UVANALYZE4 "-180d\n";  #! Angle to major axis (degrees C
+print UVANALYZE4 "\n";  #! Is feathering wanted? [Y]:
+print UVANALYZE4 "0.5\n";  #! Ratio of feather edge to outer ***CHANGED THIS!!!***
+close(UVANALYZE4);
+
+#
+# Final SST Map - no changes
+# Just another FFT here - no parameters to set
+#
+open(MAP2UVP6, "|map2uvp");
+print MAP2UVP6 "\n";  #! Do you wish to run in batch mo
+print MAP2UVP6 "n\n";  #! Do you want to create a log? [
+print MAP2UVP6 "n\n";  #! Are we going from map to UV pl
+print MAP2UVP6 "14\n";  #!   File definition number [DEFI
+print MAP2UVP6 "\n";  #!   File definition number [DEFI
+print MAP2UVP6 "sst_field.map_feather\n";  #! File name (max 52 chars) [] ("
+print MAP2UVP6 "\n";  #! Data type (IRD) [R]:
+print MAP2UVP6 "\n";  #! Are "undefined" data allowed?
+print MAP2UVP6 "\n";  #! Are the parameters that you en
+print MAP2UVP6 "y\n";  #! Do you want a comment? [N]:
+print MAP2UVP6 "SST Field Map feathered\n";  #! C:
+print MAP2UVP6 "\n";  #! Do you want to save this defin
+close(MAP2UVP6);
+
+open(MADR4, "|madr");
+print MADR4 "copy f15 16\n";  #! ?>
+print MADR4 "d f16\n";  #! ?>
+print MADR4 "$field"."$band"."$stokes"."_final.map\n";  #! File name (max 52 chars) [SST_
+print MADR4 "\n";  #! Data type (IRD) [R]:
+print MADR4 "\n";  #! Dimensions:
+print MADR4 "\n";  #! Subset [NONE]:
+print MADR4 "\n";  #! Are "undefined" data allowed?
+print MADR4 "\n";  #!    Data-unit type [4]:
+print MADR4 "\n";  #!    Scaling factor [1.000]:
+print MADR4 "\n";  #! Are the parameters that you en
+print MADR4 "\n";  #! Define coordinates (astronomic
+print MADR4 "\n";  #! Type of file (RD,RV,VD,UV,XY)
+print MADR4 "\n";  #! Sky projection (SEGTVACF) [S]:
+print MADR4 "\n";  #!    Epoch for projection (1950
+print MADR4 "\n";  #! Select velocity-like coordinat
+print MADR4 "\n";  #! RA of reference element [21H 1
+print MADR4 "\n";  #! DEC of reference record [61D 4
+print MADR4 "\n";  #! Reference ELEMENT for RA [513.
+print MADR4 "\n";  #! Reference RECORD for DEC [513.
+print MADR4 "\n";  #! DELTA "RA" per element (unsign
+print MADR4 "\n";  #! DELTA "DEC" per record (unsign
+print MADR4 "\n";  #! Define file (3rd dimension) co
+print MADR4 "\n";  #! Define resolution (beam and ve
+print MADR4 "\n";  #!    Major width [0' 56.43"]:
+print MADR4 "\n";  #!    Minor width [0' 48.52"]:
+print MADR4 "\n";  #!    Orientation angle (CCW from
+print MADR4 "\n";  #! Frequency (MHz) resolution [0.
+print MADR4 "\n";  #! Define auxiliary astronomical
+print MADR4 "\n";  #! Central heliocentric frequency
+print MADR4 "\n";  #! Stokes parameter [I] ("/?" = h
+print MADR4 "\n";  #! Data-set bandwidth (MHz) [30.0
+print MADR4 "\n"; #! Observation epoch (e.g. 1984.6
+print MADR4 "\n"; #! Are the entered astrophysical
+print MADR4 "\n";  #! Do you want a comment? [Y]:
+print MADR4 "\n";  #! C:
+print MADR4 "\n";  #! ?>
+print MADR4 "\n";  #! ?>
+print MADR4 "man\n";  #! ?>
+print MADR4 "f16=f15+f12\n";  #! M>
+print MADR4 "exit\n";  #! M>
+print MADR4 "exit\n";  #! ?>
+close(MADR4);
+
+
+open(POLARCORR2, "|polarcorr");
+print POLARCORR2 "\n";  #! Do you wish to run in batch mo
+print POLARCORR2 "n\n";  #! Do you want to create a log? [
+print POLARCORR2 "16\n";  #!   File definition number [DEFI
+print POLARCORR2 "\n";  #! Are input data to be scaled be
+print POLARCORR2 "\n";  #!   File definition number [DEFI
+print POLARCORR2 "$field"."$band"."$stokes"."_final.map_pc\n";  #! File name (max 52 chars) [] ("
+print POLARCORR2 "\n";  #! Data type (IRD) [R]:
+print POLARCORR2 "\n";  #!    Value to indicate "undefine
+print POLARCORR2 "\n";  #! Are the parameters that you en
+print POLARCORR2 "\n";  #! Do you want a comment? [N]:
+print POLARCORR2 "\n";  #! Do you want to save this defin
+print POLARCORR2 "\n";  #! Is polar-diagram centre at map
+print POLARCORR2 "\n";  #! Gaussian (G), cosine-power (C)
+print POLARCORR2 "\n"; #! Full-width at half-power of po
+print POLARCORR2 "\n";  #!   Cosine exponent to be used [
+print POLARCORR2 "\n";  #! Is inverse correction to be ma
+print POLARCORR2 "y\n";  #! Is output map to be set to "un
+print POLARCORR2 "75\n";  #!   What radius (arcmin) [93.000
+close(POLARCORR2);
+
+
+
+chdir "../..";
+	 }
+
+
+

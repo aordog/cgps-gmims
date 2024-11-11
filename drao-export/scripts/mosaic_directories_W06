@@ -1,0 +1,51 @@
+#!/usr/bin/perl -w
+
+@names=('MEL1', 'MEL2', 'MEK1', 'MEK2', 'MEJ1', 'MEJ2', 'MR1', 'MR2', 'MQ1', 'MQ2', 'MP1', 'MP2', 'MO1', 'MO2', 'MN1', 'MN2', 'MM1', 'MM2', 'ML1', 'ML2', 'MK1', 'MK2', 'MIJ1', 'MIJ2', 'MH1', 'MH2', 'MG1', 'MG2', 'MF1', 'MF2', 'ME1', 'ME2', 'MD1', 'MD2', 'MC1', 'MC2', 'MB1', 'MB2', 'MA1', 'MA2', 'MY1', 'MY2', 'MX1', 'MX2', 'MW1', 'MW2', 'MV1', 'MV2', 'MU1', 'MU2', 'MST1', 'MST2', 'MEZ1', 'MEZ2', 'MEY1', 'MEY2', 'MEX1', 'MEX2', 'MEW1', 'MEW2', 'MEV1', 'MEV2', 'MEU1', 'MEU2', 'MET1', 'MET2', 'MES1', 'MES2', 'MER1', 'MER2', 'MEQ1', 'MEQ2','MOB1','MOB2','MOB3','MOB4','MOB5','MOB6'
+);
+
+for ($i = 0; $i <= 78; $i++) { 	
+
+$namelc=lc $names[$i];
+
+$file1="$namelc"."aq_CGPS_GMIMS_image.fits";
+$file2="$namelc"."aq_CGPS_GMIMS_wt.fits";
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/a/q/$file1 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/a/q/$file2 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+
+$file1="$namelc"."au_CGPS_GMIMS_image.fits";
+$file2="$namelc"."au_CGPS_GMIMS_wt.fits";
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/a/u/$file1 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/a/u/$file2 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+
+$file1="$namelc"."bq_CGPS_GMIMS_image.fits";
+$file2="$namelc"."bq_CGPS_GMIMS_wt.fits";
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/b/q/$file1 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/b/q/$file2 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+
+$file1="$namelc"."bu_CGPS_GMIMS_image.fits";
+$file2="$namelc"."bu_CGPS_GMIMS_wt.fits";
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/b/u/$file1 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/b/u/$file2 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+
+$file1="$namelc"."cq_CGPS_GMIMS_image.fits";
+$file2="$namelc"."cq_CGPS_GMIMS_wt.fits";
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/c/q/$file1 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/c/q/$file2 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+
+$file1="$namelc"."cu_CGPS_GMIMS_image.fits";
+$file2="$namelc"."cu_CGPS_GMIMS_wt.fits";
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/c/u/$file1 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/c/u/$file2 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+
+$file1="$namelc"."dq_CGPS_GMIMS_image.fits";
+$file2="$namelc"."dq_CGPS_GMIMS_wt.fits";
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/d/q/$file1 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/d/q/$file2 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+
+$file1="$namelc"."du_CGPS_GMIMS_image.fits";
+$file2="$namelc"."du_CGPS_GMIMS_wt.fits";
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/d/u/$file1 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+system("cp /home/ordoga/DRAO_export/CG_W23/Mosaics/$names[$i]/d/u/$file2 /home/ordoga/DRAO_export/CG_W23/ready_for_RM/");
+
+
+ }

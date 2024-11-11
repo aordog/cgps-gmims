@@ -1,0 +1,58 @@
+#!/usr/bin/perl -w
+#
+#
+
+$band="a";
+$banduc = "A";
+&makemadr;
+$band="b";
+$banduc = "B";
+&makemadr;
+$band="c";
+$banduc = "C";
+&makemadr;
+$band="d";
+$banduc = "D";
+&makemadr;
+
+
+sub makemadr {
+chdir "/home/ordoga/DRAO_export/CG_W23/GMIMS_"."$band";
+
+open(RFITSQ,"|rfits");
+print RFITSQ "n\n"; #! Do you want to create a log? [Y]
+print RFITSQ "n\n"; #! Are all output filenames to be numbered versions
+print RFITSQ "n\n"; #! Are long keyword values (beyond col. 30) 
+print RFITSQ "n\n"; #! Is some listing or saving of FITS header 
+print RFITSQ "y\n"; #! Do you want to extract FITS images
+print RFITSQ "Q"."$banduc"."_GMIMS_W21.MAP\n"; #! Filename
+print RFITSQ "n\n"; #! Do you wish to override header BSCALE value? [N]
+print RFITSQ "y\n"; #! Are images to be flipped/reversed if necessary?
+print RFITSQ "y\n"; #! Are MADR file definitions to be created?
+print RFITSQ "n\n"; #! If FITS file is in 16-bit integer format,
+print RFITSQ "\n"; #! Value to be written to MADR files for "blank" data [-999.000]
+print RFITSQ "Q"."$banduc"."_GMIMS_W21_HR.fits\n"; #! Name of input disk FITS
+print RFITSQ "n\n"; #! Is more FITS processing to be done? [N]:
+close(RFITSQ);
+
+open(RFITSU,"|rfits");
+print RFITSU "n\n"; #! Do you want to create a log? [Y]
+print RFITSU "n\n"; #! Are all output filenames to be numbered versions
+print RFITSU "n\n"; #! Are long keyword values (beyond col. 30) 
+print RFITSU "n\n"; #! Is some listing or saving of FITS header 
+print RFITSU "y\n"; #! Do you want to extract FITS images
+print RFITSU "U"."$banduc"."_GMIMS_W21.MAP\n"; #! Filename
+print RFITSU "n\n"; #! Do you wish to override header BSCALE value? [N]
+print RFITSU "y\n"; #! Are images to be flipped/reversed if necessary?
+print RFITSU "y\n"; #! Are MADR file definitions to be created?
+print RFITSU "n\n"; #! If FITS file is in 16-bit integer format,
+print RFITSU "\n"; #! Value to be written to MADR files for "blank" data [-999.000]
+print RFITSU "U"."$banduc"."_GMIMS_W21_HR.fits\n"; #! Name of input disk FITS
+print RFITSU "n\n"; #! Is more FITS processing to be done? [N]:
+close(RFITSU);
+
+}
+
+
+  
+  

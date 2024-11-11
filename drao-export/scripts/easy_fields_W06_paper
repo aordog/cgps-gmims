@@ -1,0 +1,181 @@
+#!/usr/bin/perl -w
+
+# This calls the three different kinds of data combining code
+# for the three different categories of fields. Passes the
+# appropriate Lettercode and Number to those scripts.
+#
+# Adapted for use with GMIMS+CGPS (CG), AO April, 2019
+#
+# Note: add back in o9s when I sort it out.
+#
+# Make sure the number of items in each array matches the number
+# that we loop through for each type.
+
+# 'Odd' in this context means field letters that 
+# don't have all numbers 0-9 associated with them
+
+@fields_odd=(	# 'Odd' in this context means field letters that 
+["e", 0],	# don't have all numbers 0-9 associated with them
+["e", 1],
+["e", 2],
+["e", 3],
+["e", 4],
+["e", 6],
+["e", 8],
+["e", 9],
+["ea", 0],
+["ea", 1],
+["ea", 2],
+["ea", 3],
+["ea", 4],
+["ea", 5],
+["ea", 7],
+["ea", 8],
+["ea", 9],
+["el", 0],
+["el", 1],
+["el", 2],
+["el", 3],
+["el", 4],
+["el", 5],
+["el", 6],
+["eq", 5],
+["eq", 6],
+["eq", 7],
+["eq", 8],
+["eq", 9],
+["f", 1],
+["f", 3],
+["f", 4],
+["f", 5],
+["f", 6],
+["f", 7],
+["f", 8],
+["f", 9],
+["o", 0],
+["o", 1],
+["o", 2],
+["o", 3],
+["o", 4],
+["o", "4s"],
+["o", 5],
+["o", 6],
+["o", "6s"],
+["o", 7],
+["o", 8],
+["o", "9s"]);
+
+@fields_OB=(
+["ob", "02"],
+["ob", "03"],
+["ob", "04"],
+["ob", "05"],
+["ob", "08"],
+["ob", "09"],
+["ob", "10"],
+["ob", "11"],
+["ob", "12"],
+["ob", "13"],
+["ob", "14"],
+["ob", "15"],
+["ob", "16"],
+["ob", "17"],
+["sn", "01"],
+["sn", "02"],
+["sn", "03"],
+["rr", "22"]
+);
+
+@fields_norm=(	# Normal fields
+"a",
+"b",
+"c",
+"d",
+"ej",
+"ek",
+"er",
+"es",
+"et",
+"eu",
+"ev",
+"ew",
+"ex",
+"ey",
+"ez",
+"fa",
+"g",
+"ga",
+"h",
+"ha",
+"i",
+"j",
+"k",
+"l",
+"m",
+"n",
+"p",
+"q",
+"r",
+"s",
+"t",
+"u",
+"v",
+"w",
+"x",
+"y");
+
+@fields_xq=(	# Fields with 'xq' naming
+["xq", 0],
+["xq", 1],
+["xq", 2],
+["xq", 3],
+["xq", 4],
+["xq", 5],
+["xq", 6]
+);
+
+
+#for ($i = 0; $i <= 17; $i++) {
+#for ($i = 7; $i <= 11; $i++) {
+#chdir "/home/ordoga/DRAO_export/CG_W23/PRC"."/$fields_OB[$i][0]"."$fields_OB[$i][1]"."p21";
+#open(polOB,"|../../scripts/ssp_pol_OB_paper");
+#print polOB "$fields_OB[$i][0]\n";  #! "Survey Lettercode?: ";
+#print polOB "$fields_OB[$i][1]\n";  #! "Survey Number?: ";
+#close(polOB);
+#}
+
+
+#for ($i = 0; $i <= 0; $i++) {
+for ($i = 0; $i <= 48; $i++) {
+chdir "/home/ordoga/DRAO_export/CG_W23/PRC"."/$fields_odd[$i][0]"."$fields_odd[$i][1]"."p21";
+open(polodd,"|../../scripts/ssp_pol_paper");
+print polodd "$fields_odd[$i][0]\n";  #! "Survey Lettercode?: ";
+print polodd "$fields_odd[$i][1]\n";  #! "Survey Number?: ";
+close(polodd);
+}
+
+
+#for ($i = 5; $i <= 5; $i++) {
+#for ($i = 0; $i <= 35; $i++) {
+
+#	for ($j = 0; $j <= 0; $j++) {
+#	for ($j = 0; $j <= 9; $j++) {
+#
+#	chdir "/home/ordoga/DRAO_export/CG_W23/PRC"."/$fields_norm[$i]"."$j"."p21";
+#	open(polnorm,"|../../scripts/ssp_pol_paper");
+#	print polnorm "$fields_norm[$i]\n";  #! "Survey Lettercode?: ";
+#	print polnorm "$j\n";  #! "Survey Number?: ";
+#	close(polnorm);
+#	}
+#}
+
+
+#for ($i = 0; $i <= 0; $i++) {
+#for ($i = 0; $i <= 6; $i++) {
+#chdir "/home/ordoga/DRAO_export/CG_W23/PRC"."/$fields_xq[$i][0]"."$fields_xq[$i][1]"."p21";
+#open(polxq,"|../../scripts/ssp_pol_xq_paper");
+#print polxq "$fields_xq[$i][0]\n";  #! "Survey Lettercode?: ";
+#print polxq "$fields_xq[$i][1]\n";  #! "Survey Number?: ";
+#close(polxq);
+
+#}

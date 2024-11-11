@@ -1,0 +1,453 @@
+#!/usr/bin/perl -w
+#
+# script to add Stockert Stokes I data to SST fields fields are automatically copied from
+# the atlas database if they are in the correct directory, Short Spacing map has to be
+# first map in ../effmap
+#
+# This is for the fields that have a different naming scheme: 'xq'
+# RUN THIS IN THE PRC DIRECTORY
+#
+# Adapted for GMIMS, AO February 2021
+
+print "Survey Lettercode?: ";
+$survey1=<STDIN>;
+chop($survey1);
+print "Survey Number?: ";
+$survey2=<STDIN>;
+chop($survey2);
+print "Registration Factor?: ";
+$calib=<STDIN>;
+chop($calib);
+
+$survey1 = uc $survey1;
+$field="$survey2"."Q";
+$survey1 = lc $survey1;
+# reads in data from CGPS Archive directory stored on external drive:
+$path = "/media/ordoga/ANNA/GRAD_SCHOOL_FILES/Data/Archive/$survey1"."/$survey2"."/p21";
+$newdir="$survey1"."$survey2"."p21";
+
+#
+# Copy final polarization directory and create and populate subdirectories
+#
+
+system("cp -r $path"." $newdir");
+system("chmod 755 *");
+chdir "$newdir";
+system("mkdir a");
+system("mkdir b");
+system("mkdir c");
+system("mkdir d");
+
+chdir "a";
+open(MADRA,"|madr");
+print MADRA "rdir\n";
+print MADRA "../\n";
+print MADRA "rget f1\n";
+print MADRA "y\n";
+print MADRA "rget f2\n";
+print MADRA "y\n";
+print MADRA "exit\n";
+close(MADRA);
+
+chdir "../b";
+open(MADRB,"|madr");
+print MADRB "rdir\n";
+print MADRB "../\n";
+print MADRB "rget f3\n";
+print MADRB "y\n";
+print MADRB "rget f4\n";
+print MADRB "y\n";
+print MADRB "exit\n";
+close(MADRB);
+
+chdir "../c";
+open(MADRC,"|madr");
+print MADRC "rdir\n";
+print MADRC "../\n";
+print MADRC "rget f5\n";
+print MADRC "y\n";
+print MADRC "rget f6\n";
+print MADRC "y\n";
+print MADRC "exit\n";
+close(MADRC);
+
+chdir "../d";
+open(MADRD,"|madr");
+print MADRD "rdir\n";
+print MADRD "../\n";
+print MADRD "rget f7\n";
+print MADRD "y\n";
+print MADRD "rget f8\n";
+print MADRD "y\n";
+print MADRD "exit\n";
+close(MADRD);
+
+#$band="abcd";
+#&qugal;
+$band="a";
+&qugal;
+$band="b";
+&qugal;
+$band="c";
+&qugal;
+$band="d";
+&qugal;
+
+sub qugal {
+chdir "../$band";
+
+open(QUCONV,"|QU_convert");
+print QUCONV "\n";  #! Do you wish to run in batch mo
+print QUCONV "n\n";  #! Do you want to create a log? [
+print QUCONV "\n";  #! Run in debug mode? [N]:
+print QUCONV "1\n";  #!   File definition number [DEFI
+print QUCONV "2\n";  #!   File definition number [DEFI
+print QUCONV "g\n"; #!  Frame [E]:
+print QUCONV "\n";  #!   File definition number [DEFI
+print QUCONV "$field"."$band".".mq21gal\n";  #! File name (max 52 chars) [] ("
+print QUCONV "\n";  #! Are the parameters that you en
+print QUCONV "\n"; #! Do you want a comment? [N]:
+print QUCONV "\n";  #! Do you want to save this defin
+print QUCONV "\n";  #!   File definition number [DEFI
+print QUCONV "$field"."$band".".mu21gal\n";  #! File name (max 52 chars) [] ("
+print QUCONV "\n";  #! Are the parameters that you en
+print QUCONV "\n";  #! Do you want a comment? [N]:
+print QUCONV "\n";  #! Do you want to save this defin
+close(QUCONV);
+
+system("mkdir q");
+system("mkdir u");
+
+#
+# Copy final Q map of field and Short Spacing Map over
+#
+
+chdir "q";
+open(MADR,"|madr");
+print MADR "rdir\n";
+print MADR "../\n";
+print MADR "rget f3\n";
+print MADR "y\n";
+print MADR "rdir\n";
+print MADR "../../../../GMIMS_"."$band\n";
+print MADR "rget f1\n";
+print MADR "y\n";
+print MADR "exit\n";
+close(MADR);
+
+#
+# Convert SST field to brightness temperature
+#
+
+&calc;
+print "Factor : $conv_factor\n";
+
+open(MADR2, "|madr");
+print MADR2 "man\n";  #! ?>
+print MADR2 "f1m=f1*$conv_factor\n";  #! M>
+print MADR2 "exit\n";  #! M>
+print MADR2 "d f1\n";  #! ?>
+print MADR2 "\n";  #! File name (max 52 chars) [CH01
+print MADR2 "\n";  #! Data type (IRD) [R]:
+print MADR2 "\n";  #! Dimensions:
+print MADR2 "\n";  #! Subset [NONE]:
+print MADR2 "\n";  #! Are "undefined" data allowed?
+print MADR2 "4\n";  #!    Data-unit type [1]:
+print MADR2 "1\n";  #!    Scaling factor [10.000 E-4]
+print MADR2 "\n";  #! Are the parameters that you en
+print MADR2 "\n";  #! Define coordinates (astronomic
+print MADR2 "\n";  #! Type of file (RD,RV,VD,UV,XY)
+print MADR2 "\n";  #! Sky projection (SEGTVACF) [S]:
+print MADR2 "\n";  #!    Epoch for projection (1950
+print MADR2 "\n";  #! Select velocity-like coordinat
+print MADR2 "\n";  #! RA of reference element [20H 5
+print MADR2 "\n"; #! DEC of reference record [57D 1
+print MADR2 "\n";  #! Reference ELEMENT for RA [513.
+print MADR2 "\n";  #! Reference RECORD for DEC [513.
+print MADR2 "\n";  #! DELTA "RA" per element (unsign
+print MADR2 "\n";  #! DELTA "DEC" per record (unsign
+print MADR2 "\n";  #! Define file (3rd dimension) co
+print MADR2 "\n";  #! Define resolution (beam and ve
+print MADR2 "\n";  #!    Major width [0' 59.62"]:
+print MADR2 "\n";  #!    Minor width [0' 48.63"]:
+print MADR2 "\n";  #!    Orientation angle (CCW from
+print MADR2 "\n";  #! Frequency (MHz) resolution [0.
+print MADR2 "\n";  #! Define auxiliary astronomical
+print MADR2 "\n";  #! Central heliocentric frequency
+print MADR2 "\n";  #! Stokes parameter [I] ("/?" = h
+print MADR2 "\n";  #! Data-set bandwidth (MHz) [30.0
+print MADR2 "\n";  #! Observation epoch (e.g. 1984.6
+print MADR2 "\n";  #! Are the entered astrophysical
+print MADR2 "\n";  #! Do you want a comment? [N]:
+print MADR2 "\n";  #! ?>
+print MADR2 "\n";  #! ?>
+print MADR2 "\n"; #! ?>
+print MADR2 "exit\n";  #! ?>
+close(MADR2);
+
+#
+# Regrid Short Spacing Q Map
+#
+
+&posi;
+print "RA : $pos_ra  DEC : $pos_dec\n";
+
+open(MAPCONVRT, "|mapconvrt");
+print MAPCONVRT "\n"; #! Do you wish to run in batch mo
+print MAPCONVRT "\n";  #! Choice (LQCTSN) [C]:
+print MAPCONVRT "\n";  #! Do you want to create a log? [
+print MAPCONVRT "\n";  #! Choice (LQCTSN) [C]:
+print MAPCONVRT "2\n";  #!   File definition number [DEFI
+#print MAPCONVRT "y\n";  #! The angle reference frame for Q and U maps
+print MAPCONVRT "\n";  #! Scaling factor (optional) for
+print MAPCONVRT "\n";  #! Are input data values to be li
+print MAPCONVRT "\n";  #!   File definition number [DEFI
+print MAPCONVRT "gmims"."$band"."$field".".regr\n";  #! File name (max 52 chars) [] ("
+print MAPCONVRT "\n";  #! Data type (IRD) [R]:
+print MAPCONVRT "512 512\n";  #! Basic element and record dimen
+print MAPCONVRT "\n";  #!    Value to indicate "undefine
+print MAPCONVRT "\n";  #! Are the parameters that you en
+print MAPCONVRT "\n";  #! Sky projection (SEGTVACF) [S]:
+print MAPCONVRT "\n";  #!    Epoch for projection (1950
+print MAPCONVRT "$pos_ra\n";  #! RA of reference element [0H 0M
+print MAPCONVRT "$pos_dec\n";  #! DEC of reference record [0D 0'
+print MAPCONVRT "\n";  #! Reference ELEMENT for RA [513.
+print MAPCONVRT "\n";  #! Reference RECORD for DEC [513.
+print MAPCONVRT "0.33333'\n";  #! DELTA "RA" per element (unsign
+print MAPCONVRT "0.33333'\n";  #! DELTA "DEC" per record (unsign
+print MAPCONVRT "\n";  #! Are the entered astrophysical
+print MAPCONVRT "\n";  #! Do you want a comment? [N]:
+print MAPCONVRT "\n";  #! Do you want to save this defin
+print MAPCONVRT "\n";  #!   brightness-temperature scale
+print MAPCONVRT "\n";  #! Is special rotation/expansion
+close(MAPCONVRT);
+
+#
+# No No data values
+#
+
+open(MADR3, "|madr");
+print MADR3 "d f3\n";
+print MADR3 "\n";  #! File name (max 52 chars) [EFF.
+print MADR3 "\n";  #! Data type (IRD) [R]:
+print MADR3 "\n";  #! Dimensions:
+print MADR3 "\n";  #! Subset [NONE]:
+print MADR3 "n\n";  #! Are "undefined" data allowed?
+print MADR3 "\n";  #!    Data-unit type [4]:
+print MADR3 "\n";  #!    Scaling factor [1.000]:
+print MADR3 "\n";  #! Are the parameters that you en
+print MADR3 "\n";  #! Define coordinates (astronomic
+print MADR3 "\n";  #! Type of file (RD,RV,VD,UV,XY)
+print MADR3 "\n";  #! Sky projection (SEGTVACF) [S]:
+print MADR3 "\n";  #!    Epoch for projection (1950
+print MADR3 "\n";  #! Select velocity-like coordinat
+print MADR3 "\n";  #! RA of reference element [20H 5
+print MADR3 "\n";  #! DEC of reference record [57D 1
+print MADR3 "\n";  #! Reference ELEMENT for RA [513.
+print MADR3 "\n";  #! Reference RECORD for DEC [513.
+print MADR3 "\n";  #! DELTA "RA" per element (unsign
+print MADR3 "\n";  #! DELTA "DEC" per record (unsign
+print MADR3 "\n";  #! Define file (3rd dimension) co
+print MADR3 "\n";  #! Define resolution (beam and ve
+print MADR3 "\n";  #! Define auxiliary astronomical
+print MADR3 "\n";  #! Central heliocentric frequency
+print MADR3 "\n";  #! Stokes parameter [I] ("/?" = h
+print MADR3 "\n";  #! Data-set bandwidth (MHz) [0.00
+print MADR3 "\n";  #! Observation epoch (e.g. 1984.6
+print MADR3 "\n";  #! Are the entered astrophysical
+print MADR3 "\n";  #! Do you want a comment? [N]:
+print MADR3 "\n";  #! ?>
+print MADR3 "\n";  #! ?>
+print MADR3 "exit\n";  #! ?>
+close(MADR3);
+
+#
+# Copy final U map of field and Short Spacing Map over
+#
+
+chdir "../u";
+open(MADR,"|madr");
+print MADR "rdir\n";
+print MADR "../\n";
+print MADR "rget f4\n";
+print MADR "y\n";
+print MADR "rdir\n";
+print MADR "../../../../GMIMS_"."$band\n";
+print MADR "rget f2\n";
+print MADR "y\n";
+print MADR "exit\n";
+close(MADR);
+
+#
+# Convert SST field to brightness temperature
+#
+
+&calc;
+print "Factor : $conv_factor\n";
+
+open(MADR2, "|madr");
+print MADR2 "man\n";  #! ?>
+print MADR2 "f1m=f1*$conv_factor\n";  #! M>
+print MADR2 "exit\n";  #! M>
+print MADR2 "d f1\n";  #! ?>
+print MADR2 "\n";  #! File name (max 52 chars) [CH01
+print MADR2 "\n";  #! Data type (IRD) [R]:
+print MADR2 "\n";  #! Dimensions:
+print MADR2 "\n";  #! Subset [NONE]:
+print MADR2 "\n";  #! Are "undefined" data allowed?
+print MADR2 "4\n";  #!    Data-unit type [1]:
+print MADR2 "1\n";  #!    Scaling factor [10.000 E-4]
+print MADR2 "\n";  #! Are the parameters that you en
+print MADR2 "\n";  #! Define coordinates (astronomic
+print MADR2 "\n";  #! Type of file (RD,RV,VD,UV,XY)
+print MADR2 "\n";  #! Sky projection (SEGTVACF) [S]:
+print MADR2 "\n";  #!    Epoch for projection (1950
+print MADR2 "\n";  #! Select velocity-like coordinat
+print MADR2 "\n";  #! RA of reference element [20H 5
+print MADR2 "\n"; #! DEC of reference record [57D 1
+print MADR2 "\n";  #! Reference ELEMENT for RA [513.
+print MADR2 "\n";  #! Reference RECORD for DEC [513.
+print MADR2 "\n";  #! DELTA "RA" per element (unsign
+print MADR2 "\n";  #! DELTA "DEC" per record (unsign
+print MADR2 "\n";  #! Define file (3rd dimension) co
+print MADR2 "\n";  #! Define resolution (beam and ve
+print MADR2 "\n";  #!    Major width [0' 59.62"]:
+print MADR2 "\n";  #!    Minor width [0' 48.63"]:
+print MADR2 "\n";  #!    Orientation angle (CCW from
+print MADR2 "\n";  #! Frequency (MHz) resolution [0.
+print MADR2 "\n";  #! Define auxiliary astronomical
+print MADR2 "\n";  #! Central heliocentric frequency
+print MADR2 "\n";  #! Stokes parameter [I] ("/?" = h
+print MADR2 "\n";  #! Data-set bandwidth (MHz) [30.0
+print MADR2 "\n";  #! Observation epoch (e.g. 1984.6
+print MADR2 "\n";  #! Are the entered astrophysical
+print MADR2 "\n";  #! Do you want a comment? [N]:
+print MADR2 "\n";  #! ?>
+print MADR2 "\n";  #! ?>
+print MADR2 "\n"; #! ?>
+print MADR2 "exit\n";  #! ?>
+close(MADR2);
+
+
+#
+# Regrid Short Spacing U Map
+#
+
+&posi;
+print "RA : $pos_ra  DEC : $pos_dec\n";
+
+open(MAPCONVRT, "|mapconvrt");
+print MAPCONVRT "\n"; #! Do you wish to run in batch mo
+print MAPCONVRT "\n";  #! Choice (LQCTSN) [C]:
+print MAPCONVRT "\n";  #! Do you want to create a log? [
+print MAPCONVRT "\n";  #! Choice (LQCTSN) [C]:
+print MAPCONVRT "2\n";  #!   File definition number [DEFI
+#print MAPCONVRT "y\n";  #! The angle reference frame for Q and U maps
+print MAPCONVRT "\n";  #! Scaling factor (optional) for
+print MAPCONVRT "\n";  #! Are input data values to be li
+print MAPCONVRT "\n";  #!   File definition number [DEFI
+print MAPCONVRT "gmims"."$band"."$field".".regr\n";  #! File name (max 52 chars) [] ("
+print MAPCONVRT "\n";  #! Data type (IRD) [R]:
+print MAPCONVRT "512 512\n";  #! Basic element and record dimen
+print MAPCONVRT "\n";  #!    Value to indicate "undefine
+print MAPCONVRT "\n";  #! Are the parameters that you en
+print MAPCONVRT "\n";  #! Sky projection (SEGTVACF) [S]:
+print MAPCONVRT "\n";  #!    Epoch for projection (1950
+print MAPCONVRT "$pos_ra\n";  #! RA of reference element [0H 0M
+print MAPCONVRT "$pos_dec\n";  #! DEC of reference record [0D 0'
+print MAPCONVRT "\n";  #! Reference ELEMENT for RA [513.
+print MAPCONVRT "\n";  #! Reference RECORD for DEC [513.
+print MAPCONVRT "0.33333'\n";  #! DELTA "RA" per element (unsign
+print MAPCONVRT "0.33333'\n";  #! DELTA "DEC" per record (unsign
+print MAPCONVRT "\n";  #! Are the entered astrophysical
+print MAPCONVRT "\n";  #! Do you want a comment? [N]:
+print MAPCONVRT "\n";  #! Do you want to save this defin
+print MAPCONVRT "\n";  #!   brightness-temperature scale
+print MAPCONVRT "\n";  #! Is special rotation/expansion
+close(MAPCONVRT);
+
+#
+# No No data values
+#
+
+open(MADR3, "|madr");
+print MADR3 "d f3\n";
+print MADR3 "\n";  #! File name (max 52 chars) [EFF.
+print MADR3 "\n";  #! Data type (IRD) [R]:
+print MADR3 "\n";  #! Dimensions:
+print MADR3 "\n";  #! Subset [NONE]:
+print MADR3 "n\n";  #! Are "undefined" data allowed?
+print MADR3 "\n";  #!    Data-unit type [4]:
+print MADR3 "\n";  #!    Scaling factor [1.000]:
+print MADR3 "\n";  #! Are the parameters that you en
+print MADR3 "\n";  #! Define coordinates (astronomic
+print MADR3 "\n";  #! Type of file (RD,RV,VD,UV,XY)
+print MADR3 "\n";  #! Sky projection (SEGTVACF) [S]:
+print MADR3 "\n";  #!    Epoch for projection (1950
+print MADR3 "\n";  #! Select velocity-like coordinat
+print MADR3 "\n";  #! RA of reference element [20H 5
+print MADR3 "\n";  #! DEC of reference record [57D 1
+print MADR3 "\n";  #! Reference ELEMENT for RA [513.
+print MADR3 "\n";  #! Reference RECORD for DEC [513.
+print MADR3 "\n";  #! DELTA "RA" per element (unsign
+print MADR3 "\n";  #! DELTA "DEC" per record (unsign
+print MADR3 "\n";  #! Define file (3rd dimension) co
+print MADR3 "\n";  #! Define resolution (beam and ve
+print MADR3 "\n";  #! Define auxiliary astronomical
+print MADR3 "\n";  #! Central heliocentric frequency
+print MADR3 "\n";  #! Stokes parameter [I] ("/?" = h
+print MADR3 "\n";  #! Data-set bandwidth (MHz) [0.00
+print MADR3 "\n";  #! Observation epoch (e.g. 1984.6
+print MADR3 "\n";  #! Are the entered astrophysical
+print MADR3 "\n";  #! Do you want a comment? [N]:
+print MADR3 "\n";  #! ?>
+print MADR3 "\n";  #! ?>
+print MADR3 "exit\n";  #! ?>
+close(MADR3);
+
+chdir "..";
+}
+
+sub calc {
+
+open(MADRPROC,"|madr >> calc.LOG 2>&1") ||
+	die "Could not run task madr - dying\n";
+
+print MADRPROC "s f1\n";
+
+close(MADRPROC);
+
+open(TEMP,"calc.LOG") ||
+	die "Could not open file calc.LOG - dying\n";
+
+while (<TEMP>) {
+	if (/Spatial res.:\s*(\d)'\s(\d*.\d*)"\s*x\s*(\d)'\s(\d*.\d*)"/) {
+		$maj=(60*$1)+$2;
+		$min=(60*$3)+$4;
+		$ratio=$min/$maj;
+		$freq=1420.406;
+		$conv_factor=1.222e9/($freq*$freq*$maj*$min*$calib);
+	} elsif (/File name:\s*(\w*)_\w*.(\d*)/) {
+		$suffix=$1."_C21";
+}
+}
+
+
+sub posi {
+	open(MADR, "|madr >> madr.output 2>&1");
+	print MADR "s f1\n";
+	close(MADR);
+
+	open(MADROUT, "madr.output") || 
+		die "Could not open madr.output\n";
+
+	$search_string="Reference coord.:   x: ";
+	while (<MADROUT>) {
+		if(/$search_string(.{14})\D+(.{13})/) {
+			$pos_ra=$1;
+			$pos_dec=$2;
+		}
+	}
+	close(MADROUT);}
+
+}
