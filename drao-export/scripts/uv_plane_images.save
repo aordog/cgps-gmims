@@ -1,0 +1,388 @@
+#!/usr/bin/perl -w
+
+@names=(
+"ej2",
+"ej3",
+"ej4",
+"ej5",
+"ej6",
+"ej7",
+"ej8",
+"ej9",
+"ek0",
+"ek1",
+"ek2",
+"r7",
+"rr22",
+"ob11",
+"ob12",
+"ob13",
+"ob14",
+"ob15"
+);
+
+chdir "/home/aordog/DRAO_export/CG_W21/UV_IMAGES/";
+
+for ($i = 0; $i <= 11; $i++) { 	
+#for ($i = 0; $i <= 0; $i++) { 
+
+$field = $names[$i];
+
+$band = "a";
+$delt = 4.2913561;
+$stokes = "q";
+&transferfiles;
+&makefits;
+$stokes = "u";
+&transferfiles;
+&makefits;
+
+$band = "b";
+$delt = 4.2704167;
+$stokes = "q";
+&transferfiles;
+&makefits;
+$stokes = "u";
+&transferfiles;
+&makefits;
+
+$band = "c";
+$delt = 4.2297373;
+$stokes = "q";
+&transferfiles;
+&makefits;
+$stokes = "u";
+&transferfiles;
+&makefits;
+
+$band = "d";
+$delt = 4.2093935;
+$stokes = "q";
+&transferfiles;
+&makefits;
+$stokes = "u";
+&transferfiles;
+&makefits;
+
+
+}
+
+sub transferfiles{
+
+open(getfiles, "|madr");
+print getfiles "rdir\n"; #!
+print getfiles "../PRC/"."$field"."p21/"."$band"."/"."$stokes\n";#!
+print getfiles "rget f5\n";
+print getfiles "y\n";#!
+print getfiles "rget f6\n";
+print getfiles "y\n";#!
+print getfiles "rget f7\n";
+print getfiles "y\n";#!
+print getfiles "rget f10\n";
+print getfiles "y\n";#!
+print getfiles "rget f11\n";
+print getfiles "y\n";#!
+print getfiles "rget f13\n";
+print getfiles "y\n";#!
+print getfiles "rget f14\n";
+print getfiles "y\n";#!
+print getfiles "\n";#!
+print getfiles "exit\n"; #!
+close(getfiles);
+
+open(makemaplike, "|madr");
+print makemaplike "d f1\n";
+print makemaplike "\n"; #File name (max 52 chars) [SSP_FIELD.FINAL_UV] ("/?" = help): 
+print makemaplike "\n"; # Data type (IRD) [R]: 
+print makemaplike "\n"; # Current size: E 1026( 1, 1026, 1); R 1024( 1, 1024, 1) Dimensions: 
+print makemaplike "\n"; # Subset [NONE]: 
+print makemaplike "\n"; # Are "undefined" data allowed? [N]: 
+print makemaplike "\n"; # Data-unit type [7]: 
+print makemaplike "\n"; #     Unit descriptor (32 chars max) [Kelvins (Tb) (UVP equiv)] ("/?" = help): 
+print makemaplike "\n"; #     Scaling factor [1.000]:  
+print makemaplike "\n"; #  Are the parameters that you entered correct? [Y]: 
+print makemaplike "\n"; #  Define coordinates (astronomical parameters)? [Y]: 
+print makemaplike "RD\n"; #  Type of file (RD,RV,VD,UV,XY) [UV] ("/?" = help): 
+print makemaplike "G\n"; #  Sky projection (SEGTVACF) [S]: 
+print makemaplike "\n"; #  Select velocity-like coordinate (Vel or Freq) [F]: 
+print makemaplike "\n"; #  LONGITUDE of reference element [0.00000D]: 
+print makemaplike "\n"; #  LATITUDE of reference record [0.00000D]: 
+print makemaplike "\n"; #  Reference ELEMENT for longitude [514.000]: 
+print makemaplike "\n"; #  Reference RECORD for latitude [513.000]: 
+print makemaplike "$
+delt"."d\n"; #  DELTA LONGITUDE per element (unsigned) [0' 0.000"]: 
+print makemaplike "$delt"."d\n"; #  DELTA LATITUDE per record (unsigned) [0' 0.000"]: 
+print makemaplike "\n"; #  Define file (3rd dimension) coordinate? [N]: 
+print makemaplike "n\n"; #  Define resolution (beam and velocity) parameters? [N]: 
+print makemaplike "n\n"; #  Define auxiliary astronomical parameters? [N]: 
+print makemaplike "\n"; #  Are the entered astrophysical parameters correct? [Y]: 
+print makemaplike "n\n"; #  Do you want a comment? [N]:
+print makemaplike "\n";
+print makemaplike "d f2\n";
+print makemaplike "\n"; #File name (max 52 chars) [SSP_FIELD.FINAL_UV] ("/?" = help): 
+print makemaplike "\n"; # Data type (IRD) [R]: 
+print makemaplike "\n"; # Current size: E 1026( 1, 1026, 1); R 1024( 1, 1024, 1) Dimensions: 
+print makemaplike "\n"; # Subset [NONE]: 
+print makemaplike "\n"; # Are "undefined" data allowed? [N]: 
+print makemaplike "\n"; # Data-unit type [7]: 
+print makemaplike "\n"; #     Unit descriptor (32 chars max) [Kelvins (Tb) (UVP equiv)] ("/?" = help): 
+print makemaplike "\n"; #     Scaling factor [1.000]:  
+print makemaplike "\n"; #  Are the parameters that you entered correct? [Y]: 
+print makemaplike "\n"; #  Define coordinates (astronomical parameters)? [Y]: 
+print makemaplike "RD\n"; #  Type of file (RD,RV,VD,UV,XY) [UV] ("/?" = help): 
+print makemaplike "G\n"; #  Sky projection (SEGTVACF) [S]: 
+print makemaplike "\n"; #  Select velocity-like coordinate (Vel or Freq) [F]: 
+print makemaplike "\n"; #  LONGITUDE of reference element [0.00000D]: 
+print makemaplike "\n"; #  LATITUDE of reference record [0.00000D]: 
+print makemaplike "\n"; #  Reference ELEMENT for longitude [514.000]: 
+print makemaplike "\n"; #  Reference RECORD for latitude [513.000]: 
+print makemaplike "$delt"."d\n"; #  DELTA LONGITUDE per element (unsigned) [0' 0.000"]: 
+print makemaplike "$delt"."d\n"; #  DELTA LATITUDE per record (unsigned) [0' 0.000"]: 
+print makemaplike "\n"; #  Define file (3rd dimension) coordinate? [N]: 
+print makemaplike "n\n"; #  Define resolution (beam and velocity) parameters? [N]: 
+print makemaplike "n\n"; #  Define auxiliary astronomical parameters? [N]: 
+print makemaplike "\n"; #  Are the entered astrophysical parameters correct? [Y]: 
+print makemaplike "n\n"; #  Do you want a comment? [N]:
+print makemaplike "\n";
+print makemaplike "d f3\n";
+print makemaplike "\n"; #File name (max 52 chars) [SSP_FIELD.FINAL_UV] ("/?" = help): 
+print makemaplike "\n"; # Data type (IRD) [R]: 
+print makemaplike "\n"; # Current size: E 1026( 1, 1026, 1); R 1024( 1, 1024, 1) Dimensions: 
+print makemaplike "\n"; # Subset [NONE]: 
+print makemaplike "\n"; # Are "undefined" data allowed? [N]: 
+print makemaplike "\n"; # Data-unit type [7]: 
+print makemaplike "\n"; #     Unit descriptor (32 chars max) [Kelvins (Tb) (UVP equiv)] ("/?" = help): 
+print makemaplike "\n"; #     Scaling factor [1.000]:  
+print makemaplike "\n"; #  Are the parameters that you entered correct? [Y]: 
+print makemaplike "\n"; #  Define coordinates (astronomical parameters)? [Y]: 
+print makemaplike "RD\n"; #  Type of file (RD,RV,VD,UV,XY) [UV] ("/?" = help): 
+print makemaplike "G\n"; #  Sky projection (SEGTVACF) [S]: 
+print makemaplike "\n"; #  Select velocity-like coordinate (Vel or Freq) [F]: 
+print makemaplike "\n"; #  LONGITUDE of reference element [0.00000D]: 
+print makemaplike "\n"; #  LATITUDE of reference record [0.00000D]: 
+print makemaplike "\n"; #  Reference ELEMENT for longitude [514.000]: 
+print makemaplike "\n"; #  Reference RECORD for latitude [513.000]: 
+print makemaplike "$delt"."d\n"; #  DELTA LONGITUDE per element (unsigned) [0' 0.000"]: 
+print makemaplike "$delt"."d\n"; #  DELTA LATITUDE per record (unsigned) [0' 0.000"]: 
+print makemaplike "\n"; #  Define file (3rd dimension) coordinate? [N]: 
+print makemaplike "n\n"; #  Define resolution (beam and velocity) parameters? [N]: 
+print makemaplike "n\n"; #  Define auxiliary astronomical parameters? [N]: 
+print makemaplike "\n"; #  Are the entered astrophysical parameters correct? [Y]: 
+print makemaplike "n\n"; #  Do you want a comment? [N]:
+print makemaplike "\n";
+print makemaplike "d f4\n";
+print makemaplike "\n"; #File name (max 52 chars) [SSP_FIELD.FINAL_UV] ("/?" = help): 
+print makemaplike "\n"; # Data type (IRD) [R]: 
+print makemaplike "\n"; # Current size: E 1026( 1, 1026, 1); R 1024( 1, 1024, 1) Dimensions: 
+print makemaplike "\n"; # Subset [NONE]: 
+print makemaplike "\n"; # Are "undefined" data allowed? [N]: 
+print makemaplike "\n"; # Data-unit type [7]: 
+print makemaplike "\n"; #     Unit descriptor (32 chars max) [Kelvins (Tb) (UVP equiv)] ("/?" = help): 
+print makemaplike "\n"; #     Scaling factor [1.000]:  
+print makemaplike "\n"; #  Are the parameters that you entered correct? [Y]: 
+print makemaplike "\n"; #  Define coordinates (astronomical parameters)? [Y]: 
+print makemaplike "RD\n"; #  Type of file (RD,RV,VD,UV,XY) [UV] ("/?" = help): 
+print makemaplike "G\n"; #  Sky projection (SEGTVACF) [S]: 
+print makemaplike "\n"; #  Select velocity-like coordinate (Vel or Freq) [F]: 
+print makemaplike "\n"; #  LONGITUDE of reference element [0.00000D]: 
+print makemaplike "\n"; #  LATITUDE of reference record [0.00000D]: 
+print makemaplike "\n"; #  Reference ELEMENT for longitude [514.000]: 
+print makemaplike "\n"; #  Reference RECORD for latitude [513.000]: 
+print makemaplike "$delt"."d\n"; #  DELTA LONGITUDE per element (unsigned) [0' 0.000"]: 
+print makemaplike "$delt"."d\n"; #  DELTA LATITUDE per record (unsigned) [0' 0.000"]: 
+print makemaplike "\n"; #  Define file (3rd dimension) coordinate? [N]: 
+print makemaplike "n\n"; #  Define resolution (beam and velocity) parameters? [N]: 
+print makemaplike "n\n"; #  Define auxiliary astronomical parameters? [N]: 
+print makemaplike "\n"; #  Are the entered astrophysical parameters correct? [Y]: 
+print makemaplike "n\n"; #  Do you want a comment? [N]:
+print makemaplike "\n";
+print makemaplike "d f5\n";
+print makemaplike "\n"; #File name (max 52 chars) [SSP_FIELD.FINAL_UV] ("/?" = help): 
+print makemaplike "\n"; # Data type (IRD) [R]: 
+print makemaplike "\n"; # Current size: E 1026( 1, 1026, 1); R 1024( 1, 1024, 1) Dimensions: 
+print makemaplike "\n"; # Subset [NONE]: 
+print makemaplike "\n"; # Are "undefined" data allowed? [N]: 
+print makemaplike "\n"; # Data-unit type [7]: 
+print makemaplike "\n"; #     Unit descriptor (32 chars max) [Kelvins (Tb) (UVP equiv)] ("/?" = help): 
+print makemaplike "\n"; #     Scaling factor [1.000]:  
+print makemaplike "\n"; #  Are the parameters that you entered correct? [Y]: 
+print makemaplike "\n"; #  Define coordinates (astronomical parameters)? [Y]: 
+print makemaplike "RD\n"; #  Type of file (RD,RV,VD,UV,XY) [UV] ("/?" = help): 
+print makemaplike "G\n"; #  Sky projection (SEGTVACF) [S]: 
+print makemaplike "\n"; #  Select velocity-like coordinate (Vel or Freq) [F]: 
+print makemaplike "\n"; #  LONGITUDE of reference element [0.00000D]: 
+print makemaplike "\n"; #  LATITUDE of reference record [0.00000D]: 
+print makemaplike "\n"; #  Reference ELEMENT for longitude [514.000]: 
+print makemaplike "\n"; #  Reference RECORD for latitude [513.000]: 
+print makemaplike "$delt"."d\n"; #  DELTA LONGITUDE per element (unsigned) [0' 0.000"]: 
+print makemaplike "$delt"."d\n"; #  DELTA LATITUDE per record (unsigned) [0' 0.000"]: 
+print makemaplike "\n"; #  Define file (3rd dimension) coordinate? [N]: 
+print makemaplike "n\n"; #  Define resolution (beam and velocity) parameters? [N]: 
+print makemaplike "n\n"; #  Define auxiliary astronomical parameters? [N]: 
+print makemaplike "\n"; #  Are the entered astrophysical parameters correct? [Y]: 
+print makemaplike "n\n"; #  Do you want a comment? [N]:
+print makemaplike "\n";
+print makemaplike "d f6\n";
+print makemaplike "\n"; #File name (max 52 chars) [SSP_FIELD.FINAL_UV] ("/?" = help): 
+print makemaplike "\n"; # Data type (IRD) [R]: 
+print makemaplike "\n"; # Current size: E 1026( 1, 1026, 1); R 1024( 1, 1024, 1) Dimensions: 
+print makemaplike "\n"; # Subset [NONE]: 
+print makemaplike "\n"; # Are "undefined" data allowed? [N]: 
+print makemaplike "\n"; # Data-unit type [7]: 
+print makemaplike "\n"; #     Unit descriptor (32 chars max) [Kelvins (Tb) (UVP equiv)] ("/?" = help): 
+print makemaplike "\n"; #     Scaling factor [1.000]:  
+print makemaplike "\n"; #  Are the parameters that you entered correct? [Y]: 
+print makemaplike "\n"; #  Define coordinates (astronomical parameters)? [Y]: 
+print makemaplike "RD\n"; #  Type of file (RD,RV,VD,UV,XY) [UV] ("/?" = help): 
+print makemaplike "G\n"; #  Sky projection (SEGTVACF) [S]: 
+print makemaplike "\n"; #  Select velocity-like coordinate (Vel or Freq) [F]: 
+print makemaplike "\n"; #  LONGITUDE of reference element [0.00000D]: 
+print makemaplike "\n"; #  LATITUDE of reference record [0.00000D]: 
+print makemaplike "\n"; #  Reference ELEMENT for longitude [514.000]: 
+print makemaplike "\n"; #  Reference RECORD for latitude [513.000]: 
+print makemaplike "$delt"."d\n"; #  DELTA LONGITUDE per element (unsigned) [0' 0.000"]: 
+print makemaplike "$delt"."d\n"; #  DELTA LATITUDE per record (unsigned) [0' 0.000"]: 
+print makemaplike "\n"; #  Define file (3rd dimension) coordinate? [N]: 
+print makemaplike "n\n"; #  Define resolution (beam and velocity) parameters? [N]: 
+print makemaplike "n\n"; #  Define auxiliary astronomical parameters? [N]: 
+print makemaplike "\n"; #  Are the entered astrophysical parameters correct? [Y]: 
+print makemaplike "n\n"; #  Do you want a comment? [N]:
+print makemaplike "\n";
+print makemaplike "d f7\n";
+print makemaplike "\n"; #File name (max 52 chars) [SSP_FIELD.FINAL_UV] ("/?" = help): 
+print makemaplike "\n"; # Data type (IRD) [R]: 
+print makemaplike "\n"; # Current size: E 1026( 1, 1026, 1); R 1024( 1, 1024, 1) Dimensions: 
+print makemaplike "\n"; # Subset [NONE]: 
+print makemaplike "\n"; # Are "undefined" data allowed? [N]: 
+print makemaplike "\n"; # Data-unit type [7]: 
+print makemaplike "\n"; #     Unit descriptor (32 chars max) [Kelvins (Tb) (UVP equiv)] ("/?" = help): 
+print makemaplike "\n"; #     Scaling factor [1.000]:  
+print makemaplike "\n"; #  Are the parameters that you entered correct? [Y]: 
+print makemaplike "\n"; #  Define coordinates (astronomical parameters)? [Y]: 
+print makemaplike "RD\n"; #  Type of file (RD,RV,VD,UV,XY) [UV] ("/?" = help): 
+print makemaplike "G\n"; #  Sky projection (SEGTVACF) [S]: 
+print makemaplike "\n"; #  Select velocity-like coordinate (Vel or Freq) [F]: 
+print makemaplike "\n"; #  LONGITUDE of reference element [0.00000D]: 
+print makemaplike "\n"; #  LATITUDE of reference record [0.00000D]: 
+print makemaplike "\n"; #  Reference ELEMENT for longitude [514.000]: 
+print makemaplike "\n"; #  Reference RECORD for latitude [513.000]: 
+print makemaplike "$delt"."d\n"; #  DELTA LONGITUDE per element (unsigned) [0' 0.000"]: 
+print makemaplike "$delt"."d\n"; #  DELTA LATITUDE per record (unsigned) [0' 0.000"]: 
+print makemaplike "\n"; #  Define file (3rd dimension) coordinate? [N]: 
+print makemaplike "n\n"; #  Define resolution (beam and velocity) parameters? [N]: 
+print makemaplike "n\n"; #  Define auxiliary astronomical parameters? [N]: 
+print makemaplike "\n"; #  Are the entered astrophysical parameters correct? [Y]: 
+print makemaplike "n\n"; #  Do you want a comment? [N]:
+print makemaplike "\n";
+print makemaplike "exit\n"; #!
+close(makemaplike);
+
+}
+
+
+sub makefits{
+
+open(fitsanddelete, "|wfits");
+print fitsanddelete "n\n"; # Do you want to create a log? [Y]: n
+print fitsanddelete "\n"; # Are FITS images to be written to disk files? [Y]: 
+print fitsanddelete "n\n"; #Are certain comments (<72 char) to be attached to all files in this run? [Y]: n
+print fitsanddelete "1\n"; #Specify input files(s) for image data File definition number [DEFINE FILE]: 
+print fitsanddelete "n\n"; #Do you have a particular header to use as a template? [N]: 
+print fitsanddelete "n\n"; #Do you want to write a bare minimum header file? [N]: 
+print fitsanddelete "\n"; #OBJECT name for image(s) [header entry]: 
+print fitsanddelete "n\n"; #Are specific comments (<72 char) to be attached to this file? [Y]: n
+print fitsanddelete "\n"; #Are data antenna-beam values? [N]: 
+print fitsanddelete "d\n"; #Hit RETURN to examine header, any char to bypass further editing: d
+print fitsanddelete "n\n"; #Do you want to save this header as a future template? [N]: 
+print fitsanddelete "\n"; #Do you want to write header + image(s) now? [Y]: 
+print fitsanddelete "f5_G_initial_uv_"."$field"."_"."$band"."$stokes".".fits\n"; #Name of the FITS disk output file?:
+print fitsanddelete "y\n"; #Do you want to process another FITS header (+ image(s))? [Y]: n
+print fitsanddelete "2\n"; #Specify input files(s) for image data File definition number [DEFINE FILE]: 
+print fitsanddelete "n\n"; #Do you have a particular header to use as a template? [N]: 
+print fitsanddelete "n\n"; #Do you want to write a bare minimum header file? [N]: 
+print fitsanddelete "\n"; #OBJECT name for image(s) [header entry]: 
+print fitsanddelete "n\n"; #Are specific comments (<72 char) to be attached to this file? [Y]: n
+print fitsanddelete "\n"; #Are data antenna-beam values? [N]: 
+print fitsanddelete "d\n"; #Hit RETURN to examine header, any char to bypass further editing: d
+print fitsanddelete "n\n"; #Do you want to save this header as a future template? [N]: 
+print fitsanddelete "\n"; #Do you want to write header + image(s) now? [Y]: 
+print fitsanddelete "f6_G_initial_deconvolve_"."$field"."_"."$band"."$stokes".".fits\n"; #Name of the FITS disk output file?:
+print fitsanddelete "y\n"; #Do you want to process another FITS header (+ image(s))? [Y]: n
+print fitsanddelete "3\n"; #Specify input files(s) for image data File definition number [DEFINE FILE]: 
+print fitsanddelete "n\n"; #Do you have a particular header to use as a template? [N]: 
+print fitsanddelete "n\n"; #Do you want to write a bare minimum header file? [N]: 
+print fitsanddelete "\n"; #OBJECT name for image(s) [header entry]: 
+print fitsanddelete "n\n"; #Are specific comments (<72 char) to be attached to this file? [Y]: n
+print fitsanddelete "\n"; #Are data antenna-beam values? [N]: 
+print fitsanddelete "d\n"; #Hit RETURN to examine header, any char to bypass further editing: d
+print fitsanddelete "n\n"; #Do you want to save this header as a future template? [N]: 
+print fitsanddelete "\n"; #Do you want to write header + image(s) now? [Y]: 
+print fitsanddelete "f7_G_low_pass_"."$field"."_"."$band"."$stokes".".fits\n"; #Name of the FITS disk output file?:
+print fitsanddelete "y\n"; #Do you want to process another FITS header (+ image(s))? [Y]: n
+print fitsanddelete "4\n"; #Specify input files(s) for image data File definition number [DEFINE FILE]: 
+print fitsanddelete "n\n"; #Do you have a particular header to use as a template? [N]: 
+print fitsanddelete "n\n"; #Do you want to write a bare minimum header file? [N]: 
+print fitsanddelete "\n"; #OBJECT name for image(s) [header entry]: 
+print fitsanddelete "n\n"; #Are specific comments (<72 char) to be attached to this file? [Y]: n
+print fitsanddelete "\n"; #Are data antenna-beam values? [N]: 
+print fitsanddelete "d\n"; #Hit RETURN to examine header, any char to bypass further editing: d
+print fitsanddelete "n\n"; #Do you want to save this header as a future template? [N]: 
+print fitsanddelete "\n"; #Do you want to write header + image(s) now? [Y]: 
+print fitsanddelete "f10_G_final_taper_"."$field"."_"."$band"."$stokes".".fits\n"; #Name of the FITS disk output file?:
+print fitsanddelete "y\n"; #Do you want to process another FITS header (+ image(s))? [Y]: n
+print fitsanddelete "5\n"; #Specify input files(s) for image data File definition number [DEFINE FILE]: 
+print fitsanddelete "n\n"; #Do you have a particular header to use as a template? [N]: 
+print fitsanddelete "n\n"; #Do you want to write a bare minimum header file? [N]: 
+print fitsanddelete "\n"; #OBJECT name for image(s) [header entry]: 
+print fitsanddelete "n\n"; #Are specific comments (<72 char) to be attached to this file? [Y]: n
+print fitsanddelete "\n"; #Are data antenna-beam values? [N]: 
+print fitsanddelete "d\n"; #Hit RETURN to examine header, any char to bypass further editing: d
+print fitsanddelete "n\n"; #Do you want to save this header as a future template? [N]: 
+print fitsanddelete "\n"; #Do you want to write header + image(s) now? [Y]: 
+print fitsanddelete "f11_G_feathered_"."$field"."_"."$band"."$stokes".".fits\n"; #Name of the FITS disk output file?:
+print fitsanddelete "y\n"; #Do you want to process another FITS header (+ image(s))? [Y]: n
+print fitsanddelete "6\n"; #Specify input files(s) for image data File definition number [DEFINE FILE]: 
+print fitsanddelete "n\n"; #Do you have a particular header to use as a template? [N]: 
+print fitsanddelete "n\n"; #Do you want to write a bare minimum header file? [N]: 
+print fitsanddelete "\n"; #OBJECT name for image(s) [header entry]: 
+print fitsanddelete "n\n"; #Are specific comments (<72 char) to be attached to this file? [Y]: n
+print fitsanddelete "\n"; #Are data antenna-beam values? [N]: 
+print fitsanddelete "d\n"; #Hit RETURN to examine header, any char to bypass further editing: d
+print fitsanddelete "n\n"; #Do you want to save this header as a future template? [N]: 
+print fitsanddelete "\n"; #Do you want to write header + image(s) now? [Y]: 
+print fitsanddelete "f13_C_initial_uv_"."$field"."_"."$band"."$stokes".".fits\n"; #Name of the FITS disk output file?:
+print fitsanddelete "y\n"; #Do you want to process another FITS header (+ image(s))? [Y]: n
+print fitsanddelete "7\n"; #Specify input files(s) for image data File definition number [DEFINE FILE]: 
+print fitsanddelete "n\n"; #Do you have a particular header to use as a template? [N]: 
+print fitsanddelete "n\n"; #Do you want to write a bare minimum header file? [N]: 
+print fitsanddelete "\n"; #OBJECT name for image(s) [header entry]: 
+print fitsanddelete "n\n"; #Are specific comments (<72 char) to be attached to this file? [Y]: n
+print fitsanddelete "\n"; #Are data antenna-beam values? [N]: 
+print fitsanddelete "d\n"; #Hit RETURN to examine header, any char to bypass further editing: d
+print fitsanddelete "n\n"; #Do you want to save this header as a future template? [N]: 
+print fitsanddelete "\n"; #Do you want to write header + image(s) now? [Y]: 
+print fitsanddelete "f14_C_feathered_"."$field"."_"."$band"."$stokes".".fits\n"; #Name of the FITS disk output file?:
+print fitsanddelete "n\n"; #Do you want to process another FITS header (+ image(s))? [Y]: n
+close(fitsanddelete);
+
+open(delfiles, "|madr");
+print delfiles "neg f1:7\n"; #!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "y\n";#!
+print delfiles "\n";#!
+print delfiles "exit\n"; #!
+close(delfiles);
+
+}

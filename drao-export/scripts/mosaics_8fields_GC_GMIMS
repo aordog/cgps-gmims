@@ -1,0 +1,331 @@
+#!/usr/bin/perl -w
+
+# Makes GMIMS regridded mosaics that contain 8 fields
+# Adapted from earlier scripts, AO February 2021
+
+@mosaics=(
+["OB3","r7","ej2","ej7","ek2","rr22","ob11","ob12","ob15",60.75,-5.0,1406.9,1413.8,1427.4,1434.3,1420.6],
+["EL2","ek9","el4","el1","el6","ek8","el3","el0","el5",52.75,3.0,1406.9,1413.8,1427.4,1434.3,1420.6]
+);
+
+$ap=chr(34);
+$sap=chr(39);
+
+for ($i = 0; $i <= 1; $i++) {
+
+$mos="M"."$mosaics[$i][0]";
+$moslc= lc $mos;
+$long="$mosaics[$i][9]";
+$lat="$mosaics[$i][10]";
+
+chdir "/home/ordoga/DRAO_export/CG_W23/Mosaics_G/";
+system("mkdir $mos");
+
+$band="a";
+$stokes="q";
+$filename="$moslc"."$band"."$stokes";
+$freq="$mosaics[$i][11]";
+&makemos;
+
+$band="a";
+$stokes="u";
+$filename="$moslc"."$band"."$stokes";
+$freq="$mosaics[$i][11]";
+&makemos;
+
+$band="b";
+$stokes="q";
+$filename="$moslc"."$band"."$stokes";
+$freq="$mosaics[$i][12]";
+&makemos;
+
+$band="b";
+$stokes="u";
+$filename="$moslc"."$band"."$stokes";
+$freq="$mosaics[$i][12]";
+&makemos;
+
+$band="c";
+$stokes="q";
+$filename="$moslc"."$band"."$stokes";
+$freq="$mosaics[$i][13]";
+&makemos;
+
+$band="c";
+$stokes="u";
+$filename="$moslc"."$band"."$stokes";
+$freq="$mosaics[$i][13]";
+&makemos;
+
+$band="d";
+$stokes="q";
+$filename="$moslc"."$band"."$stokes";
+$freq="$mosaics[$i][14]";
+&makemos;
+
+$band="d";
+$stokes="u";
+$filename="$moslc"."$band"."$stokes";
+$freq="$mosaics[$i][14]";
+&makemos;
+
+}
+
+sub makemos {
+
+chdir "/home/ordoga/DRAO_export/CG_W23/Mosaics_G/$mos";
+system("mkdir $band");
+chdir "/home/ordoga/DRAO_export/CG_W23/Mosaics_G/$mos/$band";
+system("mkdir $stokes");
+chdir "/home/ordoga/DRAO_export/CG_W23/Mosaics_G/$mos"."/$band"."/$stokes";
+
+open(getfiles, "|madr");
+print getfiles "rdir\n"; #!
+print getfiles "../../../../PRC/"."$mosaics[$i][1]"."p21/"."$band"."/$stokes\n";#!
+print getfiles "rget f12\n";
+print getfiles "n\n";#!
+print getfiles "rdir\n";#!
+print getfiles "../../../../PRC/"."$mosaics[$i][2]"."p21/"."$band"."/$stokes\n";#!
+print getfiles "rget f12\n";
+print getfiles "n\n";#!
+print getfiles "rdir\n";#!
+print getfiles "../../../../PRC/"."$mosaics[$i][3]"."p21/"."$band"."/$stokes\n";#!
+print getfiles "rget f12\n";
+print getfiles "n\n";#!
+print getfiles "rdir\n";#!
+print getfiles "../../../../PRC/"."$mosaics[$i][4]"."p21/"."$band"."/$stokes\n";#!
+print getfiles "rget f12\n";
+print getfiles "n\n";#!
+print getfiles "rdir\n";#!
+print getfiles "../../../../PRC/"."$mosaics[$i][5]"."p21/"."$band"."/$stokes\n";#!
+print getfiles "rget f12\n";
+print getfiles "n\n";#!
+print getfiles "rdir\n";#!
+print getfiles "../../../../PRC/"."$mosaics[$i][6]"."p21/"."$band"."/$stokes\n";#!
+print getfiles "rget f12\n";
+print getfiles "n\n";#!
+print getfiles "rdir\n";#!
+print getfiles "../../../../PRC/"."$mosaics[$i][7]"."p21/"."$band"."/$stokes\n";#!
+print getfiles "rget f12\n";
+print getfiles "n\n";#!
+print getfiles "rdir\n";#!
+print getfiles "../../../../PRC/"."$mosaics[$i][8]"."p21/"."$band"."/$stokes\n";#!
+print getfiles "rget f12\n";
+print getfiles "n\n";#!
+print getfiles "nam\n";
+print getfiles ".\n";
+print getfiles "exit\n"; #!
+close(getfiles);
+
+
+open(supermos, "|supertile");
+print supermos "\n";  #! Do you wish to run in batch mo
+print supermos "\n";  #! Do you want to create a log? [
+print supermos "\n";  #! Is log file to be printed on e
+print supermos "\n";  #! Run in debug mode? [N]:
+print supermos "\n";  #! Display elapsed times on termi
+print supermos "\n";  #! Are you adding new datasets to
+print supermos "\n";  #! Are oversize input datasets to
+print supermos "l\n";  #! Select max. number of input da
+print supermos "n\n";  #! Are datacubes (rather than sin
+print supermos "\n";  #! Type to be used [3]:
+print supermos "\n";  #! Are a resolution datacube and
+print supermos "\n";  #!  Are only these beam products
+print supermos "\n";  #! Desired weighting scheme [1]:
+print supermos "\n";  #! Are polar diagrams assumed to
+print supermos "\n";  #! Are all polar diagrams centred
+print supermos "\n";  #! Are input datasets to be corre
+print supermos "\n";  #! Are registration corrections t
+print supermos "\n";  #!   Relative RMS noise (after sc
+print supermos "1\n";  #!   File definition number [DEFI
+print supermos "y\n"; #! Do you wish to change the defin
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "0.000D\n"; #! Orientation angle (CCW from longitude axis) [0.000D]: 
+print supermos "\n"; #! Frequency (MHz) resolution [0.000]: 
+print supermos "\n"; #! Do you want to save the modified definition? [N]:
+print supermos "$freq\n"; #! Enter frequency (MHz) for polar diagram (408/1420/other) [1420]:  
+print supermos "\n"; #! Is there a value that can be adopted for all datasets? [Y]:  
+print supermos "107.2\n"; #! Polar-diagram full half-power width (arcmin) [0.000]:
+print supermos "\n";  #! Are weights to be set to zero
+print supermos "\n";  #! Can one radius be adopted for
+print supermos "75\n";  #!  Radius to zero weights beyond
+print supermos "\n";  #! Add another dataset? [Y]:
+print supermos "\n";  #!   Scale factor [1.000]:
+print supermos "\n";  #!   Relative RMS noise (after sc
+print supermos "2\n";  #!   File definition number [DEFI
+print supermos "y\n"; #! Do you wish to change the defin
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "0.000D\n"; #! Orientation angle (CCW from longitude axis) [0.000D]: 
+print supermos "\n"; #! Frequency (MHz) resolution [0.000]: 
+print supermos "\n"; #! Do you want to save the modified definition? [N]: 
+print supermos "\n";  #! Add another dataset? [Y]:
+print supermos "\n";  #!   Scale factor [1.000]:
+print supermos "\n"; #!   Relative RMS noise (after sc
+print supermos "3\n";  #!   File definition number [DEFI
+print supermos "y\n"; #! Do you wish to change the defin
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "0.000D\n"; #! Orientation angle (CCW from longitude axis) [0.000D]: 
+print supermos "\n"; #! Frequency (MHz) resolution [0.000]: 
+print supermos "\n"; #! Do you want to save the modified definition? [N]: 
+print supermos "\n";  #! Add another dataset? [Y]:
+print supermos "\n";  #!   Scale factor [1.000]:
+print supermos "\n"; #!   Relative RMS noise (after sc
+print supermos "4\n";  #!   File definition number [DEFI
+print supermos "y\n"; #! Do you wish to change the defin
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "0.000D\n"; #! Orientation angle (CCW from longitude axis) [0.000D]: 
+print supermos "\n"; #! Frequency (MHz) resolution [0.000]: 
+print supermos "\n"; #! Do you want to save the modified definition? [N]: 
+print supermos "\n";  #! Add another dataset? [Y]:
+print supermos "\n";  #!   Scale factor [1.000]:
+print supermos "\n"; #!   Relative RMS noise (after sc
+print supermos "5\n";  #!   File definition number [DEFI
+print supermos "y\n"; #! Do you wish to change the defin
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "0.000D\n"; #! Orientation angle (CCW from longitude axis) [0.000D]: 
+print supermos "\n"; #! Frequency (MHz) resolution [0.000]: 
+print supermos "\n"; #! Do you want to save the modified definition? [N]: 
+print supermos "\n";  #! Add another dataset? [Y]:
+print supermos "\n";  #!   Scale factor [1.000]:
+print supermos "\n"; #!   Relative RMS noise (after sc
+print supermos "6\n";  #!   File definition number [DEFI
+print supermos "y\n"; #! Do you wish to change the defin
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "0.000D\n"; #! Orientation angle (CCW from longitude axis) [0.000D]: 
+print supermos "\n"; #! Frequency (MHz) resolution [0.000]: 
+print supermos "\n"; #! Do you want to save the modified definition? [N]: 
+print supermos "\n";  #! Add another dataset? [Y]:
+print supermos "\n";  #!   Scale factor [1.000]:
+print supermos "\n"; #!   Relative RMS noise (after sc
+print supermos "7\n";  #!   File definition number [DEFI
+print supermos "y\n"; #! Do you wish to change the defin
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "0.000D\n"; #! Orientation angle (CCW from longitude axis) [0.000D]: 
+print supermos "\n"; #! Frequency (MHz) resolution [0.000]: 
+print supermos "\n"; #! Do you want to save the modified definition? [N]: 
+print supermos "\n";  #! Add another dataset? [Y]:
+print supermos "\n";  #!   Scale factor [1.000]:
+print supermos "\n"; #!   Relative RMS noise (after sc
+print supermos "8\n";  #!   File definition number [DEFI
+print supermos "y\n"; #! Do you wish to change the defin
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "36"."$sap"." 0.00"."$ap\n";  #! Major width [0' 0.00"]: 
+print supermos "0.000D\n"; #! Orientation angle (CCW from longitude axis) [0.000D]: 
+print supermos "\n"; #! Frequency (MHz) resolution [0.000]: 
+print supermos "\n"; #! Do you want to save the modified definition? [N]: 
+print supermos "n\n";  #! Add another dataset? [Y]:
+print supermos "\n";  #!   File definition number [DEFI
+print supermos "$filename".".mos\n"; #! File name (max 52 chars) [] ("
+print supermos "\n";  #! Data type (IRD) [R]:
+print supermos "1024 1024\n";  #! Basic element and record dimen
+print supermos "\n";  #!    Value to indicate "undefine
+print supermos "\n";  #! Are the parameters that you en
+print supermos "g\n";  #! Sky projection (SEGTVACF) [S]:
+print supermos "f\n"; #! Select velocity-like coordinat
+print supermos "$long"."D\n";  #! LONGITUDE of reference element
+print supermos "$lat"."D\n";  #! LATITUDE of reference record [
+print supermos "\n";  #! Reference ELEMENT for longitud
+print supermos "\n";  #! Reference RECORD for latitude
+print supermos "18"."$ap\n";  #! DELTA LONGITUDE per element (u
+print supermos "18"."$ap\n";  #! DELTA LATITUDE per record (uns
+print supermos "\n";  #! Define file (3rd dimension) co
+print supermos "\n";  #! Define resolution (beam and ve
+print supermos "2008.0\n"; #! Observation epoch (e.g. 1984.6
+print supermos "\n";  #! Are the entered astrophysical
+print supermos "\n";  #! Do you want a comment? [N]:
+print supermos "\n";  #! Do you want to save this defin
+print supermos "\n";  #! Do you wish to continue? [Y]:
+print supermos "\n";  #!   brightness-temperature scale
+print supermos "\n";  #! Record interval ( >= 64 ) for
+print supermos "\n";  #!   File definition number [DEFI
+print supermos "$filename".".wt\n"; #! File name (max 52 chars) [] ("
+print supermos "\n";  #!    Value to indicate "undefine
+print supermos "\n";  #! Are the parameters that you en
+print supermos "\n";  #! Do you want to save this defin
+print supermos "\n";  #!   File definition number [DEFI
+print supermos "$filename".".res@@\n";  #! File name (max 52 chars) [] ("
+print supermos "\n";  #!    Value to indicate "undefine
+print supermos "\n";  #! Are the parameters that you en
+print supermos "\n";  #! Do you want to save this defin
+print supermos "\n";  #!   File definition number [DEFI
+print supermos "$filename".".bp\n";  #! File name (max 52 chars) [] ("
+print supermos "\n";  #!    Value to indicate "undefine
+print supermos "\n";  #! Are the parameters that you en
+print supermos "\n";  #! C:
+print supermos "\n";  #! Do you want to save this defin
+print supermos "\n";  #! just in case...
+close(supermos);
+
+open(changefiles, "|madr");
+print changefiles "d f9\n";#! ?>
+print changefiles "\n";  #! File name (max 52 chars) [ME2A
+print changefiles "\n";  #! Data type (IRD) [R]:
+print changefiles "\n";  #! Dimensions:
+print changefiles "\n";  #! Subset [NONE]:
+print changefiles "\n";  #! Are "undefined" data allowed?
+print changefiles "\n";  #!    Value to indicate "undefine
+print changefiles "\n";  #!    Data-unit type [4]:
+print changefiles "\n";  #!    Scaling factor [1.000]:
+print changefiles "\n";  #! Are the parameters that you en
+print changefiles "\n";  #! Define coordinates (astronomic
+print changefiles "\n";  #! Type of file (RD,RV,VD,UV,XY)
+print changefiles "\n";  #! Sky projection (SEGTVACF) [G]:
+print changefiles "\n";  #! Select velocity-like coordinat
+print changefiles "\n";  #! LONGITUDE of reference element
+print changefiles "\n";  #! LATITUDE of reference record [
+print changefiles "\n";  #! Reference ELEMENT for longitud
+print changefiles "\n";  #! Reference RECORD for latitude
+print changefiles "\n";  #! DELTA LONGITUDE per element (u
+print changefiles "\n";  #! DELTA LATITUDE per record (uns
+print changefiles "\n";  #! Define file (3rd dimension) co
+print changefiles "\n";  #! Define resolution (beam and ve
+print changefiles "\n";  #! Define auxiliary astronomical
+print changefiles "$freq\n"; #! Central heliocentric frequency
+print changefiles "\n";  #! Stokes parameter [Qgal] ("/?"
+print changefiles "\n";  #! Data-set bandwidth (MHz) [7.50
+print changefiles "\n";  #! Observation epoch (e.g. 1984.6
+print changefiles "\n";  #! Are the entered astrophysical
+print changefiles "\n";  #! Do you want a comment? [N]:
+print changefiles "exit\n";  #! ?>
+close(changefiles);
+
+open(makefits, "|wfits");
+print makefits "\n"; #! Do you want to create a log? [
+print makefits "\n"; #! Is log file to be printed on e
+print makefits "\n"; #! Are FITS images to be written
+print makefits "n\n";  #!  in this run? [Y]:
+print makefits "9\n";  #!   File definition number [DEFI
+print makefits "\n"; #! Do you have a particular heade
+print makefits "\n"; #! Do you want to write a bare mi
+print makefits "$filename"."_GMIMS_image\n";  #! OBJECT name for image(s) [head
+print makefits "n\n";  #! Are specific comments (<72 cha
+print makefits "\n"; #! Are data antenna-beam values?
+print makefits "d\n";  #! Hit RETURN to examine header,
+print makefits "\n"; #! Do you want to save this heade
+print makefits "\n"; #! Do you want to write header to
+print makefits "\n"; #! Do you want to write header +
+print makefits "$filename"."_GMIMS_image.fits\n";  #! Name of the FITS disk output f
+print makefits "y\n";  #! Do you want to process another
+print makefits "10\n";  #!   File definition number [DEFI
+print makefits "\n"; #! Do you have a particular heade
+print makefits "\n"; #! Do you want to write a bare mi
+print makefits "$filename"."_GMIMS_wt\n";  #! OBJECT name for image(s) [head
+print makefits "n\n";  #! Are specific comments (<72 cha
+print makefits "\n"; #! Are data antenna-beam values?
+print makefits "d\n";  #! Hit RETURN to examine header,
+print makefits "\n"; #! Do you want to save this heade
+print makefits "\n"; #! Do you want to write header to
+print makefits "\n"; #! Do you want to write header +
+print makefits "$filename"."_GMIMS_wt.fits\n";  #! Name of the FITS disk output f
+print makefits "n\n";  #! Do you want to process another
+close(makefits);
+
+}
+
